@@ -19,7 +19,6 @@ jobs:
     env:
       DOTNET_VERSION: '6.0.x'
       DOTNET_CONFIGURATION: ${{ matrix.configuration }}
-      TEST_PROJECT: ./tests/Appcontext.Tests.csproj
       MONGODB_VERSION: '6.0'
       TestMongoDBConnectionString: 'mongodb://127.0.0.1:27017/appcontext-test'
       TestMongoDBDatabaseName: 'appcontext-test'
@@ -43,4 +42,4 @@ jobs:
         run: dotnet build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }}
 
       - name: Run tests
-        run: dotnet test ${{ env.TEST_PROJECT }} --no-build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} --verbosity normal
+        run: dotnet test --no-build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} --verbosity normal
