@@ -32,4 +32,4 @@ jobs:
         run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIG }}
 
       - name: Publish package
-        run: nuget push src\AppContext\bin\Release\HC.AppContext.${GITHUB_REF:10}.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
