@@ -4,6 +4,9 @@ on:
   push:
     branches-ignore:
       - 'skip-ci/**'
+    paths-ignore:
+      - 'frontend/**'
+      - 'doc/**'
 
 jobs:
   build:
@@ -14,9 +17,9 @@ jobs:
         configuration: ['Debug', 'Release']
 
     env:
-      DOTNET_VERSION: '6.0.*'
+      DOTNET_VERSION: '6.0.x'
       DOTNET_CONFIGURATION: ${{ matrix.configuration }}
-      WORKING_DIR: ./tests/AppContext.Tests.csproj
+      TEST_PROJECT: ./tests/Appcontext.Tests.csproj
       MONGODB_VERSION: '6.0'
       TestMongoDBConnectionString: 'mongodb://127.0.0.1:27017/appcontext-test'
       TestMongoDBDatabaseName: 'appcontext-test'
@@ -28,10 +31,6 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Show project directory
-        run: ls -lah
-        working-directory: ${{ env.WORKING_DIR }}
-
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
         with:
@@ -39,12 +38,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: ${{ env.WORKING_DIR }}
 
       - name: Build project
         run: dotnet build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }}
-        working-directory: ${{ env.WORKING_DIR }}
 
       - name: Run tests
         run: dotnet test ${{ matrix.project.test }} --no-build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} --verbosity normal
-        working-directory: ${{ env.WORKING_DIR }}
