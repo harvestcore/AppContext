@@ -26,7 +26,7 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.5
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION }} --configuration ${{ env.BUILD_CONFIG }}
+        run: dotnet restore ${{ env.SOLUTION }}
 
       - name: Build project
         run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIG }}
