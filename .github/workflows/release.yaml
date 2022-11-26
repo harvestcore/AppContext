@@ -1,0 +1,33 @@
+name: Release package
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: '6.0.x'
+      BUILD_CONFIG: 'Release'
+      SOLUTION: 'AppContext.sln'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
+
+      - name: Restore dependencies
+        run: nuget restore ${{ env.SOLUTION }}
+
+      - name: Publish package
+        if: startsWith(github.ref, 'refs/heads/release')
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
