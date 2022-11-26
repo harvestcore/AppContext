@@ -26,8 +26,10 @@ jobs:
         uses: NuGet/setup-nuget@v1.0.5
 
       - name: Restore dependencies
-        run: nuget restore ${{ env.SOLUTION }}
+        run: dotnet restore ${{ env.SOLUTION }} --configuration ${{ env.BUILD_CONFIG }}
+
+      - name: Build project
+        run: dotnet build --no-restore --configuration ${{ env.BUILD_CONFIG }}
 
       - name: Publish package
-        if: startsWith(github.ref, 'refs/heads/release')
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+        run: nuget push src\AppContext\bin\Release\HC.AppContext.${GITHUB_REF:10}.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
