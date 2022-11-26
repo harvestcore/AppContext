@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using AppContext.Tests.Base;
+
 using MongoDB.Driver;
 
 using Xunit;
 
-namespace Matroos.Resources.Tests.Services;
+namespace AppContext.Tests.Services;
 
 public class DataContextServiceTests : BaseTest, IDisposable
 {

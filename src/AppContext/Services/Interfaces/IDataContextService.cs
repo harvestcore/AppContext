@@ -13,7 +13,7 @@ public interface IDataContextService
     /// </summary>
     /// <typeparam name="TValue">The data type of the collection.</typeparam>
     /// <returns>The collection found or null.</returns>
-    public IMongoCollection<TValue>? GetCollection<TValue>() where TValue : IBaseItem;
+    public IMongoCollection<TValue> GetCollection<TValue>() where TValue : IBaseItem;
 
     /// <summary>
     /// Get all the items of the collection that match the filter.

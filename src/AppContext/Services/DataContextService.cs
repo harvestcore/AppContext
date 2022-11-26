@@ -38,8 +38,19 @@ public class DataContextService : IDataContextService
         _database = _mongoClient?.GetDatabase(databaseName) ?? throw new Exception("Could not get the database.");
     }
 
+    /// <summary>
+    /// Constructor with parameters.
+    /// </summary>
+    /// <param name="connectionString">The MongoDB connection string.</param>
+    /// <param name="databaseName">The database name.</param>
+    public DataContextService(string connectionString, string databaseName)
+    {
+        _mongoClient = new MongoClient(connectionString) ?? throw new Exception("Could not get the MongoDB client.");
+        _database = _mongoClient?.GetDatabase(databaseName) ?? throw new Exception("Could not get the database.");
+    }
+
     /// <inheritdoc/>
-    public IMongoCollection<TValue>? GetCollection<TValue>() where TValue : IBaseItem
+    public IMongoCollection<TValue> GetCollection<TValue>() where TValue : IBaseItem
     {
         // Get the static property that contains the collection name.
         PropertyInfo? property = typeof(TValue).GetProperty(CollectionNamePropertyName);
@@ -56,7 +67,7 @@ public class DataContextService : IDataContextService
             }
         }
 
-        return null;
+        throw new Exception("Missing collection.");
     }
 
     /// <inheritdoc/>
@@ -65,18 +76,12 @@ public class DataContextService : IDataContextService
         // List of elements to be returned.
         List<TValue> output = new();
 
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
+        // Get all the items.
+        IAsyncCursor<TValue> items = await GetCollection<TValue>().FindAsync(filter);
+        if (items != null)
         {
-            // Get all the items.
-            IAsyncCursor<TValue> items = await collection.FindAsync(filter);
-            if (items != null)
-            {
-                // Convert the items to a list.
-                output = items.ToList();
-            }
+            // Convert the items to a list.
+            output = items.ToList();
         }
 
         // Return the items.
@@ -89,18 +94,12 @@ public class DataContextService : IDataContextService
         // List of elements to be returned.
         List<TValue> output = new();
 
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
+        // Get all the items.
+        IAsyncCursor<TValue> items = await GetCollection<TValue>().FindAsync(_ => true);
+        if (items != null)
         {
-            // Get all the items.
-            IAsyncCursor<TValue> items = await collection.FindAsync(_ => true);
-            if (items != null)
-            {
-                // Convert the items to a list.
-                output = items.ToList();
-            }
+            // Convert the items to a list.
+            output = items.ToList();
         }
 
         // Return the items.
@@ -110,19 +109,13 @@ public class DataContextService : IDataContextService
     /// <inheritdoc/>
     public async Task<TValue?> Get<TValue>(Guid guid) where TValue : IBaseItem
     {
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
+        // Get all the items.
+        FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
+        IAsyncCursor<TValue> items = await GetCollection<TValue>().FindAsync(filter);
+        if (items != null)
         {
-            // Get all the items.
-            FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
-            IAsyncCursor<TValue> items = await collection.FindAsync(filter);
-            if (items != null)
-            {
-                // Convert the items to a list.
-                return items.FirstOrDefault();
-            }
+            // Convert the items to a list.
+            return items.FirstOrDefault();
         }
 
         // Return the items.
@@ -137,16 +130,8 @@ public class DataContextService : IDataContextService
             return false;
         }
 
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
-        {
-            await collection.InsertOneAsync(item);
-            return true;
-        }
-
-        return false;
+        await GetCollection<TValue>().InsertOneAsync(item);
+        return true;
     }
 
     /// <inheritdoc/>
@@ -157,32 +142,16 @@ public class DataContextService : IDataContextService
             return false;
         }
 
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
-        {
-            FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
-            ReplaceOneResult result = await collection.ReplaceOneAsync(filter, item);
-            return result.ModifiedCount == 1;
-        }
-
-        return false;
+        FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
+        ReplaceOneResult result = await GetCollection<TValue>().ReplaceOneAsync(filter, item);
+        return result.ModifiedCount == 1;
     }
 
     /// <inheritdoc/>
     public async Task<bool> Delete<TValue>(Guid guid) where TValue : IBaseItem
     {
-        // Get the collection.
-        IMongoCollection<TValue>? collection = GetCollection<TValue>();
-
-        if (collection != null)
-        {
-            FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
-            DeleteResult result = await collection.DeleteOneAsync(filter);
-            return result.DeletedCount == 1;
-        }
-
-        return false;
+        FilterDefinition<TValue> filter = Builders<TValue>.Filter.Eq("_id", guid.ToString());
+        DeleteResult result = await GetCollection<TValue>().DeleteOneAsync(filter);
+        return result.DeletedCount == 1;
     }
 }

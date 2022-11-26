@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-using Matroos.Resources.Services;
-using Matroos.Resources.Services.Interfaces;
+using AppContext.Services;
+using AppContext.Services.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
 using Xunit;
 
-namespace Matroos.Resources.Tests.Services;
+namespace AppContext.Tests.Services;
 
 public class ConfigurationServiceTests
 {
