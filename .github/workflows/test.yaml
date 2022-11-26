@@ -43,4 +43,4 @@ jobs:
         run: dotnet build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }}
 
       - name: Run tests
-        run: dotnet test ${{ matrix.project.test }} --no-build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} --verbosity normal
+        run: dotnet test ${{ env.TEST_PROJECT }} --no-build --no-restore --configuration ${{ env.DOTNET_CONFIGURATION }} --verbosity normal
