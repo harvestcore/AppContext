@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>HC.AppContext</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>harvestcore</Authors>
     <Product>$(AssemblyName)</Product>
     <Description>MongoDB and simple configuration services for your app.</Description>
