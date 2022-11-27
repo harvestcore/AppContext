@@ -27,7 +27,7 @@ public class BaseTest
         _configurationService = new ConfigurationService(configuration);
 
         // The default values can be overwriten via Environment Variables.
-        string connectionString = _configurationService.Get<string>("TestMongoDBConnectionString") ?? "http://localhost:27017/appcontext-test";
+        string connectionString = _configurationService.Get<string>("TestMongoDBConnectionString") ?? "mongodb://127.0.0.1:27017/appcontext-test";
         string databaseName = _configurationService.Get<string>("TestMongoDBDatabaseName") ?? "appcontext-test";
 
         // Configure the testing database.
